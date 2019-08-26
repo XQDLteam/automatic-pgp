@@ -1,13 +1,29 @@
 """
+NOMES: RODRIGO BISSO
+
+REQUISITOS:
+    sudo apt install gpg
+    pip3 install python-gnupg
+
+diretorio precisa ter permissao 700 (chmod 700 <nome_dir>)
+criar um diretorio com essa permissão dentro do diretorio .gnupg (/home/<usr>/.gnupg/)
 
 TUTORIAL SEGUIDO:
     https://gnupg.readthedocs.io/en/latest/
     https://gist.github.com/ryantuck/56c5aaa8f9124422ac964629f4c8deb0
 
+
 """
 
 import gnupg
 import os
+import sys
+
+if len(sys.argv) < 2 :
+    print("Uso: pyhton3 " +sys.argv[0]+ " <arquivo_mensagem>")
+    sys.exit(0) 
+
+file_message = sys.argv[1]
 
 gpg = gnupg.GPG(gnupghome=os.getcwd())
 imput_data = gpg.gen_key_input(
@@ -24,6 +40,7 @@ ascii_armored_private_keys= gpg.export_keys(
         secret='True',
         passphrase='passphrase'
 )
+
 # exporting keys
 with open('mykeyfile.asc', 'w') as f:
     f.write(ascii_armored_public_keys)
@@ -38,7 +55,7 @@ for k in import_result.results:
 
 #encrypting file
 
-with open('plain.txt','rb') as f:
+with open(file_message,'rb') as f:
     status=gpg.encrypt_file(
         file=f,
         recipients=['my@email.com'],
@@ -57,18 +74,13 @@ with open('encrypted.txt.gpg', 'rb') as f:
         passphrase='passphrase',
         output='decrypted.txt',
     )
+    
+#Sending keys
+#gpg.send_keys(SERVER, PRIVATE_KEY_ID)
+
+#remote import keys
+#import_result = gpg.recv_keys('server-name', 'keyid1', 'keyid2', ...)
 
 print(status.ok)
 print(status.status)
 print(status.stderr)
-
-"""
-gpg = gnupg.GPG(gnupghome=os.getcwd())
-gpg.encondig = 'utf-8'
-
-input_data = gpg.gen_key_input(key_type="RSA", key_length=1024)
-key = gpg.gen_key(input_data)
-
-ascii_armored_public_keys = gpg.export_keys("chave-teste-publica")
-ascii_armored_private_keys = gpg.export_keys("chave-teste-privada", True)
-"""

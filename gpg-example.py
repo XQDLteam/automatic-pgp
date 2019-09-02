@@ -11,15 +11,17 @@ criar um diretorio com essa permissão dentro do diretorio .gnupg (/home/<usr>/.
 TUTORIAL SEGUIDO:
     https://gnupg.readthedocs.io/en/latest/
     https://gist.github.com/ryantuck/56c5aaa8f9124422ac964629f4c8deb0
-
+    https://pymotw.com/2/argparse/
+    http://zetcode.com/python/argparse/
 
 """
 
 import gnupg
 import os
 import sys
+import argparse
 
-def export_keys(key): #local -> to file
+def export_keys(gpg, key): #local -> to file
     
     ascii_armored_public_keys = gpg.export_keys(key.fingerprint)
     ascii_armored_private_keys= gpg.export_keys(
@@ -42,20 +44,35 @@ def import_keys(): #local
 
     return import_result
 
-#Sending keys
-#gpg.send_keys(SERVER, PRIVATE_KEY_ID)
+def import_keys_server():
+    
+    import_result = gpg.recv_keys('server-name', 'keyid')
 
-#remote import keys
-#import_result = gpg.recv_keys('server-name', 'keyid1', 'keyid2', ...)
+
+def export_keys_server(gpg, keys): #Sending keys
+    #gpg.send_keys(SERVER, PRIVATE_KEY_ID)
+
+def help() 
+    parser = argparse.ArgumentParser(description="gerenciador de chaves gpg")
+    parser.add_argument("--name", action="store", dest="name_usr")
+    parser.add_argument("--email", action="store", dest="email_usr")
+    parser.add_argument("--passphrase", action="store", dest="passphrase")
+
+    args = parser.parse_args()
+    
+    return args
 
 if __name__ == "__main__":
 
+    
+    """
     if len(sys.argv) < 2 :
         print("Uso: pyhton3 " +sys.argv[0]+ " <arquivo_mensagem>")
         sys.exit(0) 
 
     file_message = sys.argv[1]
-
+    """
+    args = help()
     gpg = gnupg.GPG(gnupghome=os.getcwd())
     imput_data = gpg.gen_key_input(
             name_email='my@email.com',

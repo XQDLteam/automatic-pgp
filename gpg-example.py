@@ -68,18 +68,18 @@ def export_keys(gpg, key, passphrase):
             passphrase = passphrase
     )
 
-def create_key(gpg):
+def generate_key(gpg, name, email, passphrase):
     
     user = {
-        'name_real' : "Bisso",
-        'name_email' : "bisso@teste.net",
-        'expire_date' : '2019-09-10',
+        'name_real' : name,
+        'name_email' : email,
+        #'expire_date' : '2019-09-10',
         'key_type': 'RSA',
         'key_length': 4096,
         'key_usage': '',
         #'subkey_type':'RSA',
         #'subkey_length' : "encrypt,sign,auth",
-        'passphrase': "disney" }
+        'passphrase': passphrase }
 
     user_input = gpg.gen_key_input(**user)
     #print(user_input)
@@ -92,7 +92,7 @@ def create_key(gpg):
 def help(): 
     parser = argparse.ArgumentParser(description="gerenciador de chaves gpg")
     
-    parser.add_argument("--criar-chave", action="store_true")
+    parser.add_argument("--generate-key", action="store_true")
     parser.add_argument("--name", action="store", dest="user_name")
     parser.add_argument("--email", action="store", dest="use_email")
     parser.add_argument("--passphrase", action="store", dest="user_passphrase")
@@ -113,8 +113,9 @@ if __name__ == "__main__":
     #print(args)
     #print(args.user_name) 
     gpg = gnupg.GPG(gnupghome=os.getcwd())
-    
-    #create_key(gpg) 
+    if args.generate_key == True:
+        generate_key(gpg, args.user_name, args.user_email, args.user_passphrase)
+     
     #delete_keys()
     #list_keys()
 

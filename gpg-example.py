@@ -38,7 +38,7 @@ def import_keys_server():
 def export_keys_server(gpg, keys): #Sending keys
     pass
     #gpg.send_keys(SERVER, PRIVATE_KEY_ID)
-
+"""
 def delete_keys():
     
     public_keys = gpg.list_keys() 
@@ -49,15 +49,21 @@ def delete_keys():
     
     for key in public_keys:
         gpg.delete_keys(key['fingerprint'])
-    
-def list_keys():
+#"""    
+def list_keys(gpg, user_name):
     
     public_keys = gpg.list_keys() 
     private_keys = gpg.list_keys(secret=True)
-        
-    print("public keys: ", public_keys)
-    print()
-    print("private keys: ", private_keys)
+    
+    print("public keys")
+    for key in public_keys:
+        if key['uids'][0].split(' ')[0] == user_name:
+            print(key)
+
+    print("private keys: ")
+    for key in private_keys:
+        if key['uids'][0].split(' ')[0] == user_name:
+            print(key)    
 
 def export_keys(gpg, key, passphrase):
     
@@ -84,8 +90,6 @@ def generate_key(gpg, name, email, passphrase):
     user_input = gpg.gen_key_input(**user)
     #print(user_input)
     user_key = gpg.gen_key(user_input)
-    #print("user_key: ", user_key.fingerprint)
-    #print("user_key: ", user_key)
     export_keys(gpg, user_key, user['passphrase'])
     
 
@@ -94,16 +98,16 @@ def help():
     
     parser.add_argument("--generate-key", action="store_true")
     parser.add_argument("--name", action="store", dest="user_name")
-    parser.add_argument("--email", action="store", dest="use_email")
+    parser.add_argument("--email", action="store", dest="user_email")
     parser.add_argument("--passphrase", action="store", dest="user_passphrase")
-    
+    parser.add_argument("--list-keys", action="store_true")
+    #parser.add_argument("--name", action="store", dest="user_name")
+    parser.add_argument("--delete-keys", action="store_true")
+    #parser.add_argument("--name", action="store", dest="user_name")
     args = parser.parse_args()
     
     print (args)
     
-    #parser = argparse.ArgumentParser()
-
-
     return args
 
 if __name__ == "__main__":
@@ -117,7 +121,7 @@ if __name__ == "__main__":
         generate_key(gpg, args.user_name, args.user_email, args.user_passphrase)
      
     #delete_keys()
-    #list_keys()
+    #list_keys(gpg, args.user_name)
+    if args.list_keys == True:
+        list_keys(gpg, args.user_name)
 
-
-  

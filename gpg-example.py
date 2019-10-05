@@ -95,18 +95,27 @@ def generate_key(gpg, name, email, passphrase):
 
 def help(): 
     parser = argparse.ArgumentParser(description="gerenciador de chaves gpg")
+#    subparsers = parser.add_subparsers()
     
-    parser.add_argument("--generate-key", action="store_true")
-    parser.add_argument("--name", action="store", dest="user_name")
-    parser.add_argument("--email", action="store", dest="user_email")
-    parser.add_argument("--passphrase", action="store", dest="user_passphrase")
-    parser.add_argument("--list-keys", action="store_true")
-    #parser.add_argument("--name", action="store", dest="user_name")
-    parser.add_argument("--delete-keys", action="store_true")
-    #parser.add_argument("--name", action="store", dest="user_name")
+    parser.add_argument("--email", action="store", dest="email", 
+                         help= """Needed by the arguments --generate key and --list-key""")
+
+    group_generate = parser.add_argument_group("Generate pair keys")
+    group_generate.add_argument("--generate-keys", action="store_true", 
+                                 help="""Need the arguments --name, --email and --passphrase 
+                                       to generate the pair key""")
+    group_generate.add_argument("--name", action="store", dest="name")
+    group_generate.add_argument("--passphrase", action="store", dest="passphrase")
+    
+    group_list = parser.add_argument_group("List keys")
+    group_list.add_argument("--list-keys", action="store_true", 
+                                 help="""Need the arguments --email to list the keys""")
+
+    group_delete = parser.add_argument_group("Delete pair keys")
+    group_delete.add_argument("--delete-keys", action="store_true", 
+                                 help="""Need the argumentes --email and --passphrase 
+                                         to delete the keys""")
     args = parser.parse_args()
-    
-    print (args)
     
     return args
 
